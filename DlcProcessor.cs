@@ -130,13 +130,19 @@ public class DlcProcessor
                 ct.ThrowIfCancellationRequested();
                 progress.Report(new(done, scanResult.TotalItems, $"Extracting {done}/{scanResult.Archives.Count}: {arc.Name}"));
                 log($"  Extracting: {arc.Name}", "White");
-                var outDir = Path.Combine(destPath, arc.Name.Substring(0, arc.Name.Length - arc.Extension.Length));
+                var outDir = Path.Combine(destPath, Path.GetFileNameWithoutExtension(arc.Name));
                 try
                 {
                     bool ok = await _archiver.ExtractAsync(arc.FullName, outDir, ct);
-                    log(ok ? $"    [OK] {arc.Name.Substring(0, arc.Name.Length - arc.Extension.Length)}"
-                           : $"    [WARN] {arc.Name}: archiver returned error",
-                        ok ? "Lime" : "Orange");
+                    if (ok)
+                    {
+                        log($"    [OK] Extracted to '{Path.GetFileName(outDir)}'", "Lime");
+                        await UnnestFolder(outDir, log);
+                    }
+                    else
+                    {
+                        log($"    [WARN] {arc.Name}: archiver returned error", "Orange");
+                    }
                 }
                 catch (Exception ex) { log($"    [ERROR] {arc.Name}: {ex.Message}", "Red"); }
                 done++;
@@ -297,5 +303,31 @@ public class DlcProcessor
             ct.ThrowIfCancellationRequested();
             await CopyDirAsync(d, Path.Combine(dst, Path.GetFileName(d)), progress, ct);
         }
+    }
+    
+    private static Task UnnestFolder(string targetDir, Action<string, string> log)
+    {
+        return Task.Run(() =>
+        {
+            var dirInfo = new DirectoryInfo(targetDir);
+            var files = dirInfo.GetFiles();
+            var dirs = dirInfo.GetDirectories();
+
+            if (files.Length == 0 && dirs.Length == 1)
+            {
+                var nestedDir = dirs[0];
+                log($"    [INFO] Detected single nested folder '{nestedDir.Name}'. Moving contents up.", "Cyan");
+                
+                foreach (var file in nestedDir.GetFiles())
+                {
+                    file.MoveTo(Path.Combine(targetDir, file.Name));
+                }
+                foreach (var dir in nestedDir.GetDirectories())
+                {
+                    dir.MoveTo(Path.Combine(targetDir, dir.Name));
+                }
+                nestedDir.Delete();
+            }
+        });
     }
 }
