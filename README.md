@@ -4,11 +4,22 @@
 
 This project began out of a personal need to streamline the process of installing DLCs for COM3D2. What started as a simple script has evolved into a more stable and flexible application, designed to make batch-installing DLCs as painless as possible, saving you from the tedious task of handling them one by one.
 
+## Download
+
+You can download the latest version of the application from the **[Releases page](https://github.com/loampo/COM3D2_DLC_Batcher/releases/tag/1.0)**.
+
+Just grab the `COM3D2_DLC_Batcher.exe` file from the latest release.
+
+## Prerequisites
+
+Before using the tool, please ensure the following for the best experience:
+
+*   **Updated Game:** It is highly recommended to update your game using its official updater. The batcher includes a safety check and may not run if it cannot detect a specific launcher version. Running the official updater first ensures maximum compatibility.
+*   **Archiver Software:** For full archive support (`.rar`, `.7z`), you must have **7-Zip** or **WinRAR** installed. The application will automatically detect them. If neither is found, it will fall back to the native Windows `.zip` support.
+
 ## How to Use
 
 This tool acts as a **pre-processor** that prepares your DLC files for the official game launcher. It does not install the DLCs directly. Instead, it organizes and processes them so that the game's launcher can recognize and install them correctly.
-
-**Important:** Before using this tool, it is highly recommended to update your game using its official updater. The batcher includes a safety check and may not run if it cannot detect a specific launcher version. While it might work without updating, running the official updater first ensures maximum compatibility.
 
 Follow these steps:
 
