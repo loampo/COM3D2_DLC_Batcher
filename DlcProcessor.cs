@@ -7,6 +7,7 @@ using System.Linq;
 using System;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Text;
 
 namespace COM3D2_DLC_Batcher.Services;
 
@@ -266,7 +267,7 @@ public class DlcProcessor
         }
 
         var relPath = validDirs[0].Substring(destPath.Length).TrimStart('\\').Replace('\\', '/');
-        File.WriteAllText(dlcFile, relPath, System.Text.Encoding.UTF8);
+        File.WriteAllText(dlcFile, relPath, new UTF8Encoding(false));
         log($"[OK]   {profile.DlcPrefix}{fName}.dlc  ->  {relPath}", "Lime");
         created++;
     }
